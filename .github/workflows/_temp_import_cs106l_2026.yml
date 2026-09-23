@@ -6,6 +6,7 @@ on:
       - cs106l-material-import-20260923
     paths:
       - .github/workflows/_temp_import_cs106l_2026.yml
+      - .github/scripts/_temp_import_cs106l_2026.py
 
 permissions:
   contents: write
@@ -44,7 +45,7 @@ jobs:
           test "$(find materials/cs106l/2026-spring/lecture-05-pages -type f -name 'page-*.jpg' | wc -l)" -eq 68
           test "$(find materials/cs106l/2026-spring/lecture-11-pages -type f -name 'page-*.jpg' | wc -l)" -eq 31
           git status --short
-          git add             materials/cs106l/2026-spring/2026Spring-05-Containers.pdf             materials/cs106l/2026-spring/2026Spring-11-LambdasAndFunctors.pdf             materials/cs106l/2026-spring/lecture-05-pages             materials/cs106l/2026-spring/lecture-11-pages
+          git add materials/cs106l/2026-spring/2026Spring-05-Containers.pdf materials/cs106l/2026-spring/2026Spring-11-LambdasAndFunctors.pdf materials/cs106l/2026-spring/lecture-05-pages materials/cs106l/2026-spring/lecture-11-pages
           git diff --cached --name-only | grep -q '^materials/cs106l/2026-spring/'
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
