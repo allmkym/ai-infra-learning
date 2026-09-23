@@ -1,0 +1,58 @@
+name: Temporary CS106L 2026 material import
+
+on:
+  push:
+    branches:
+      - cs106l-material-import-20260923
+    paths:
+      - .github/workflows/_temp_import_cs106l_2026.yml
+
+permissions:
+  contents: write
+
+jobs:
+  import-materials:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out temporary import branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Preserve import script
+        run: cp .github/scripts/_temp_import_cs106l_2026.py /tmp/import_cs106l.py
+
+      - name: Switch to current remote main
+        run: |
+          git fetch origin main
+          git checkout -B import-main origin/main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install renderer
+        run: python -m pip install --disable-pip-version-check PyMuPDF
+
+      - name: Download, verify, and render attached-material equivalents
+        run: python /tmp/import_cs106l.py
+
+      - name: Validate staged scope and commit
+        run: |
+          set -euo pipefail
+          test "$(find materials/cs106l/2026-spring/lecture-05-pages -type f -name 'page-*.jpg' | wc -l)" -eq 68
+          test "$(find materials/cs106l/2026-spring/lecture-11-pages -type f -name 'page-*.jpg' | wc -l)" -eq 31
+          git status --short
+          git add             materials/cs106l/2026-spring/2026Spring-05-Containers.pdf             materials/cs106l/2026-spring/2026Spring-11-LambdasAndFunctors.pdf             materials/cs106l/2026-spring/lecture-05-pages             materials/cs106l/2026-spring/lecture-11-pages
+          git diff --cached --name-only | grep -q '^materials/cs106l/2026-spring/'
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Add CS106L Spring 2026 Lecture 5 and 11 binary materials"
+
+      - name: Recheck main and push without force
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
