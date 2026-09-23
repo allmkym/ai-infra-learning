@@ -15,41 +15,39 @@
 
 ## 版本与读取顺序
 
-- 状态版本：0009
+- 状态版本：0010
 - 更新日期：2026-09-23
-- 保存情况：Lecture 2/3/5/11 资料状态已保留；第 1 阶段 · 单元 1 概念教学完成，独立编码任务由学员主动跳过并保留作后续补救
+- 保存情况：第 1 阶段 · 单元 2 已开始；第 1 轮 scope/lifetime/dangling 短复核完成
 - 仓库及教学分支：https://github.com/allmkym/ai-infra-learning ，main
 - 必读：本文件 → TEACHING.md → ROADMAP.md；再按当前任务读取备课记录与原始资料
 - 当前备课记录：records/stage-01-preparation.md
-- 当前教学证据：records/stage-01-unit-01-evidence.md
+- 单元 1 证据：records/stage-01-unit-01-evidence.md
+- 单元 2 证据：records/stage-01-unit-02-evidence.md
 
 ## 当前教学位置
 
-- 位置：第 1 阶段 · 单元 1 的第 1～3 轮概念教学已完成；独立编码任务未完成、未验收。可继续单元 2。
-- 回答表现：第 1、3 轮短复核通过；第 2 轮曾有一次 const 推导错误，教师纠正后，学员已能用自己的话正确解释普通 `auto` 与 `auto&` 对顶层 const 的不同处理。
-- 该 const 推导点当前证据为“纠正后能解释”，不是隔时迁移或独立编码通过。
-- 下一步：进入第 1 阶段 · 单元 2；按 TEACHING.md 先补读该单元实际需要的 CS106L 原始资料与版本匹配规则，再开始作用域、生命周期、基础值类别与转换。
-- 旧启动前练习不计正式进度，也不作为当前作业。
+- 位置：第 1 阶段 · 单元 2 进行中。
+- 单元 1：概念教学完成；独立 Name Catalog 任务由学员主动跳过，状态仍为未完成／未验收，保留作后续补救；不改变后续正常布置编码任务的教学规则。
+- 单元 2 第 1 轮已讲：scope 与 lifetime 区分、dangling pointer/reference/view、按值返回 owning object、shadowing。
+- 第 1 轮回答：5 组核心判断均正确；需精确化的一点是 dangling pointer 解引用通常不是编译错误，而是 well-formed 代码触发 undefined behavior。
+- 下一步：单元 2 第 2 轮，学习 C++20 value categories：lvalue / xvalue / prvalue，以及基础引用绑定规则。
 
 ## 证据边界
 
-- 单元 1 已讲：初始化与 narrowing、C++20 auto 常见推导、引用与 const、auto/auto&/const auto&、新对象/底层数据/ownership、签名与基础契约边界。
-- 第 3 轮 6 项接口判断均正确；能区分签名可见事实与需由实现/文档补充的前置条件、失败和 lifetime 契约。
-- 学员明确自评已很好掌握本单元，并认为 Name Catalog 小任务收益较低；该自评如实记录，但不自动升级为“独立完成”“迁移通过”或正式验收。
-- 本单元没有学员代码提交、教师运行或 CI 结果；评估代码 SHA 未绑定。
-- 后续更综合编码若暴露本单元缺口，重新启用 exercises/stage-01/unit-01/task.md。
+- 单元 1 的 const 推导点：教师纠正后，学员已能解释普通 `auto` 丢弃顶层 const、`auto&` 绑定 const 对象时得到 `const T&`；证据为“纠正后能解释”，非迁移通过。
+- 单元 2 第 1 轮：已能区分名字 scope 与对象 lifetime；能识别 dangling pointer/string_view；能说明 owning 按值返回与借用返回的差异；能识别 shadowing 创建不同对象。
+- 当前单元 2 证据均为讲解后的短复核，不是独立编码或迁移通过。
+- 当前没有单元 2 学员代码提交、教师运行或 CI 结果；评估代码 SHA 未绑定。
 
 ## 资料状态与限制
 
-- Lecture 2/3/5/11 入口：materials/cs106l/2026-spring/README.md；页数、SHA-256 与来源校验见 manifest.json。
-- 资料入库、机器提取和抽样核对不等于教师逐页已读或学员已学会。
-- Lecture 2 有文本层但可能漏代码截图/图示；Lecture 3/5 为图片型，OCR 仅供定位并提供逐页图；Lecture 11 以文本层为主，第 40/41 页用 OCR 补充并提供选择性页图。
-- 单元 1 来源、勘误和已读边界见 records/stage-01-preparation.md；精确代码/图示需回看原页，语言语义按 C++20 版本匹配资料核验。
+- 单元 2 已补读来源：Lecture 2 PDF 第 44–47 页文本层；Lecture 3 第 33–55 页提取文本，并直接核对第 40、41、42、55 页页面图；textbook 的 local lifetime 相关段落；C++20 N4861 的 scope、lifetime、value categories、reference binding、conversion 与 overload ranking。
+- Lecture 3 对 lvalue/rvalue 的“等号左/右、是否有地址”以及“You can only reference L-values”属于教学简化，不能作为 C++20 完整定义；具体勘误与来源边界见 records/stage-01-preparation.md。
+- Lecture 5/11 已入库但与当前单元 2 无关，本轮未记为已阅读。
 
 ## 当前任务材料
 
-- 保留补救任务：exercises/stage-01/unit-01/task.md
-- 状态：学员主动跳过／未完成／未验收；不改变后续正常布置编码任务的教学规则。
-- 当前没有教师实际运行或 CI 运行结果。
+- 单元 1 保留补救任务：exercises/stage-01/unit-01/task.md
+- 单元 2 当前尚未布置正式编码任务。
 
-HANDOFF_END: 0009
+HANDOFF_END: 0010
