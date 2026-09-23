@@ -6,13 +6,19 @@ import fitz
 BASE = Path("materials/cs106l/2026-spring")
 FILES = {
     "2026Spring-05-Containers.pdf": {
-        "url":"https://web.stanford.edu/class/cs106l/lectures/2026Spring-05-Containers.pdf",
+        "urls":[
+            "https://web.stanford.edu/class/archive/cs/cs106l/cs106l.1266/lectures/2026Spring-05-Containers.pdf",
+            "https://web.stanford.edu/class/cs106l/lectures/2026Spring-05-Containers.pdf",
+        ],
         "bytes":16146632,
         "pages":68,
         "sha256":"1dad3333f05915e63e395854d027c52eac3575ee6e00a08371091e067140bc46",
     },
     "2026Spring-11-LambdasAndFunctors.pdf": {
-        "url":"https://web.stanford.edu/class/cs106l/lectures/2026Spring-11-LambdasAndFunctors.pdf",
+        "urls":[
+            "https://web.stanford.edu/class/archive/cs/cs106l/cs106l.1266/lectures/2026Spring-11-LambdasAndFunctors.pdf",
+            "https://web.stanford.edu/class/cs106l/lectures/2026Spring-11-LambdasAndFunctors.pdf",
+        ],
         "bytes":9299906,
         "pages":137,
         "sha256":"4c40b1349fc366f05d76c1de044b3043d8644e7dc2f15ce8abcc83e15b76dd62",
@@ -30,17 +36,25 @@ def sha256(path):
 def download_verified(name, meta):
     dst=BASE/name
     dst.parent.mkdir(parents=True, exist_ok=True)
-    req=urllib.request.Request(meta["url"], headers={"User-Agent":"Mozilla/5.0"})
-    with urllib.request.urlopen(req, timeout=180) as r, open(dst,"wb") as f:
-        shutil.copyfileobj(r,f)
-    size=dst.stat().st_size
-    digest=sha256(dst)
-    doc=fitz.open(dst)
-    pages=len(doc)
-    doc.close()
-    if (size,digest,pages)!=(meta["bytes"],meta["sha256"],meta["pages"]):
-        raise SystemExit(f"verification failed for {name}: size={size} sha256={digest} pages={pages}")
-    print(f"verified {name}: {size} bytes, {pages} pages, {digest}")
+    errors=[]
+    for url in meta["urls"]:
+        try:
+            req=urllib.request.Request(url, headers={"User-Agent":"Mozilla/5.0"})
+            with urllib.request.urlopen(req, timeout=180) as r, open(dst,"wb") as f:
+                shutil.copyfileobj(r,f)
+            size=dst.stat().st_size
+            digest=sha256(dst)
+            doc=fitz.open(dst)
+            pages=len(doc)
+            doc.close()
+            if (size,digest,pages)!=(meta["bytes"],meta["sha256"],meta["pages"]):
+                errors.append(f"{url}: verification mismatch size={size} sha256={digest} pages={pages}")
+                continue
+            print(f"verified {name} from {url}: {size} bytes, {pages} pages, {digest}")
+            return
+        except Exception as e:
+            errors.append(f"{url}: {type(e).__name__}: {e}")
+    raise SystemExit("all download candidates failed for "+name+"\n" + "\n".join(errors))
 
 def render(pdf_name, out_dir, page_numbers):
     doc=fitz.open(BASE/pdf_name)
